@@ -22,10 +22,10 @@ class xorshift_1024 {
 
 
 public:
-  typedef uint64_t result_type;
+  typedef uint32_t result_type;
 
-  static uint64_t min BOOST_PREVENT_MACRO_SUBSTITUTION () { return 0; }
-  static uint64_t max BOOST_PREVENT_MACRO_SUBSTITUTION () { return 0xFFFFFFFF; }
+  static uint32_t min BOOST_PREVENT_MACRO_SUBSTITUTION () { return 0; }
+  static uint32_t max BOOST_PREVENT_MACRO_SUBSTITUTION () { return 0xFFFFFFFF; }
 
   xorshift_1024(unsigned int short_seed) : p(0) {
       //Use splitmix to initialize the long internal state
@@ -47,9 +47,9 @@ public:
     return s[p] * UINT64_C(1181783497276652981);
   }
 
-  uint64_t operator()()
+  uint32_t operator()()
     {
-      return this->next();
+      return (uint32_t) this->next();
     }
 
   /* This is the jump function for the generator. It is equivalent
