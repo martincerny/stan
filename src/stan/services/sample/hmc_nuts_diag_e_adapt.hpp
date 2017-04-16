@@ -10,6 +10,7 @@
 #include <stan/services/util/run_adaptive_sampler.hpp>
 #include <stan/services/util/create_rng.hpp>
 #include <stan/services/util/initialize.hpp>
+#include <stan/services/sample/xorshift_test.hpp>
 #include <vector>
 
 namespace stan {
@@ -65,14 +66,17 @@ namespace stan {
                                 callbacks::writer& init_writer,
                                 callbacks::writer& sample_writer,
                                 callbacks::writer& diagnostic_writer) {
-        boost::ecuyer1988 rng = util::create_rng(random_seed, chain);
+        xorshift_1024 rng(random_seed);
+        for (size_t i = 0; i < chain; i++) {
+          rng.jump();
+        }
 
         std::vector<int> disc_vector;
         std::vector<double> cont_vector
           = util::initialize(model, init, rng, init_radius, true,
                              message_writer, init_writer);
 
-        stan::mcmc::adapt_diag_e_nuts<Model, boost::ecuyer1988>
+        stan::mcmc::adapt_diag_e_nuts<Model, xorshift_1024>
           sampler(model, rng);
         sampler.set_nominal_stepsize(stepsize);
         sampler.set_stepsize_jitter(stepsize_jitter);
