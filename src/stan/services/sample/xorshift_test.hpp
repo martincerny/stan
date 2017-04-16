@@ -80,4 +80,17 @@ public:
 
 };
 
+namespace boost {
+namespace random {
+
+namespace detail {
+  template<> template<> double new_uniform_01<double>::operator()<xorshift_1024>(xorshift_1024& eng) {
+       uint64_t x = eng.next();   
+       const union { uint64_t i; double d; } u = { .i = UINT64_C(0x3FF) << 52 | x >> 12 };
+       return u.d - 1.0;  
+  }       
+}
+
+}}
+
 #endif
